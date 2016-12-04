@@ -17,8 +17,8 @@ function poly2deq( f
     length(f) == length(ns) || error("length(fx) must be $(length(ns))")
     vo = collect(take(vec, length(ds)-1))
     vi = collect(drop(vec, length(ds)-1))
-    svi = [f[1](t)]
-    svo = [vo[2:end]; (sum(ns.*vi) - sum(ds[1:end-1].*vo[1:end]))/ds[end]]
+    svi = f $ t
+    svo = [vo[2:end]; (sum(ns.*vi) - sum(ds[1:end-1].*vo))/ds[end]]
     return [svo; svi]
   end
   return H

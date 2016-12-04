@@ -5,17 +5,20 @@ import OdeUtility: poly2deq
 
 # ---------------------------------------------------------------------- 
 function lpf1()
-  t = [0:0.1:100;]
+  t = [0:0.1:10.0;]
   noms = [1.0]
   dens = [1.0, 10.0]
-  ini = [0.0, 0.1]
+  ini = [0.0, 0.0]
 
-  # h = poly2deq((t->2.0<=t<3.0 ? 1.0 : 0.0), noms, dens)
-  h = poly2deq([sin], noms, dens)
+  td, tr = 0.0, 1.0
+  step(t)  = 0.5 - cospi(clamp((t-td)/tr, 0, 1))/2 
+  dstep(t) = pi/tr*sinpi(clamp((t-td)/tr, 0, 1))/2
+
+  h = poly2deq([dstep], noms, dens)
   t, y = ODE.ode23s(h, ini, t)
   y1 = [ a[1] for a in y ]
   y2 = [ a[2] for a in y ]
-  return t, y1, y2 
+  return t, y1, y2
 end
 
 function run_top()
