@@ -13,4 +13,15 @@ snd(x) = begin a, b = x; return b; end
 zipWith(f,a,b) = map(f, zip(a,b))
 
 # ----------------------------------------------------------------------  
+export csvWrite
+
+function csvWrite(filename, mode, vec; delim="\t")
+  open(filename, mode) do fp
+    for i in 1:snd(size(vec))
+      println(fp, join(vec[:,i], delim))
+    end
+  end
+end
+
+# ----------------------------------------------------------------------  
 end  # module
