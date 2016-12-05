@@ -2,12 +2,30 @@ include("Utility.jl")
 module OdeUtility
 # ---------------------------------------------------------------------- 
 # ---------------------------------------------------------------------- 
+using ForwardDiff
+
 import ODE
 import Utility: fst, snd
+import Calculus: derivative
 export poly2deq
 # ---------------------------------------------------------------------- 
 
-function poly2deq( f
+function poly2deq( f0 :: Function
+                 , ns = [1.]
+                 , ds = [1., 10.]
+                 )
+  f = Array{Function}(length(ns))
+  for i in 1:length(ns)
+    if i == 1
+      f[1] = derivative(f0)
+    else
+      f[i] = derivative(f[i-1])
+    end
+  end
+  poly2deq(f, ns, ds)
+end
+
+function poly2deq( f :: Array{Function,1}
                  , ns = [1.]
                  , ds = [1., 10.]
                  )

@@ -27,6 +27,7 @@ end
 #  basic functions
 
 sigmoid(x, a) = 1 / (1 + exp(-a*x))
+step(t, td, tr) = 0.5 - cospi(clamp((t-td)/tr, 0, 1))/2
 
 # ----------------------------------------------------------------------  
 end  # module
