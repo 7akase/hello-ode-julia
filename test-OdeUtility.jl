@@ -1,5 +1,5 @@
 include("Utility.jl")
-include("simulate.jl")
+include("OdeUtility.jl")
 
 using Base.Test
 using ForwardDiff
@@ -59,28 +59,24 @@ function hpf1_step()
   t  = tt
   y1 = [ a[1] for a in y ]
   y2 = [ a[2] for a in y ]
-  println("$(length(t)), $(length(y1)), $(length(y2))")
 
   h = poly2deq(t -> 0, noms, dens)
   tt, y = ODE.ode23s(h, y[end], t1)
   t  = [t;tt]
   y1 = [y1;[ a[1] for a in y ]]
   y2 = [y2;[ a[2] for a in y ]]
-  println("$(length(t)), $(length(y1)), $(length(y2))")
   
   h = poly2deq(t->f0(t-5.0), noms, dens)
   tt, y = ODE.ode23s(h, y[end], t2r)
   t  = [t;tt]
   y1 = [y1;[ a[1] for a in y ]]
   y2 = [y2;[ a[2] for a in y ]]
-  println("$(length(t)), $(length(y1)), $(length(y2))")
 
-  h = poly2deq(t->f0(t-5.0), noms, dens)
+  h = poly2deq(t->0, noms, dens)
   tt, y = ODE.ode23s(h, y[end], t2)
   t  = [t;tt]
   y1 = [y1;[ a[1] for a in y ]]
   y2 = [y2;[ a[2] for a in y ]]
-  println("$(length(t)), $(length(y1)), $(length(y2))")
 
   return t, y1, y2
 end
