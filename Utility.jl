@@ -26,10 +26,11 @@ end
 
 # ----------------------------------------------------------------------  
 #  basic functions
-export sigmoid, step
+export sigmoid, step_cos
 
 sigmoid(x, a) = 1 / (1 + exp(-a*x))
-step(t, td, tr) = 0.5 - cospi(clamp((t-td)/tr, 0, 1))/2
+step_cos(t, td, tr) = 0.5 - cospi(clamp((t-td)/tr, 0, 1))/2
+
 # ----------------------------------------------------------------------  
 #  array and matrix
 import Base.convert
