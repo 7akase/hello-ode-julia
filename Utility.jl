@@ -3,6 +3,7 @@ module Utility
 import Base: $, *
 export fst, snd
 export zipWith
+export filter_rec
 
 fst(x) = begin a, b = x; return a; end
 snd(x) = begin a, b = x; return b; end
@@ -11,6 +12,26 @@ snd(x) = begin a, b = x; return b; end
 (∘)(g :: Function, f :: Function) = x -> g(f(x))
 
 zipWith(f,a,b) = map(f, zip(a,b))
+
+function filter_rec(op, xss)
+  filter_rec(op, xss, [])
+end
+
+function filter_rec(op, xss, ys)
+  if isempty(xss)
+    return ys
+  else
+    for i in xss
+      if op(i)
+        push!(ys, i)
+      end
+      if isa(i, AbstractArray)
+        filter_rec(op, i, ys)
+      end
+    end
+    return ys
+  end
+end
 
 # ----------------------------------------------------------------------  
 export csvWrite
