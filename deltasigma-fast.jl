@@ -36,7 +36,7 @@ dDac = 2 / 2^Ndac
 
 vi = zeros(noms)
 vo = zeros(dens)[1:end-1]
-a0_in  = [vo; vi]
+a0_in  = [vo; vi]  # initial value of the DAC
 
 Nfft = 2^14
 
@@ -50,9 +50,10 @@ Nsig = Nfft ÷ Nwaves
 Tsig = Tfft / Nwaves
 fsig = 1.0 / Tsig
 # 2pi*fsig*A*Ts = dDac  <=>  A = dDac / 2pi fsig Ts
-fin(t) =  (dDac / pi * osr ) .* sinpi(2*fsig*t)
-stepDac(t) = dDac * step_cos(t, 0, Ts*0.005) 
+fin(t) =  (dDac / pi * osr ) .* sinpi(2*fsig*t)  # input function
+stepDac(t) = dDac * step_cos(t, 0, Ts*0.005)     # DAC function
 
+# generate timescale
 Tsim = Ts * Nfft
 
 ts = [0:Nfft-1;] .* Ts
@@ -68,7 +69,7 @@ a0_dac = a0_in
 a0_dac[1] = dDac 
 t, yDac = ODE.ode23s(G(t -> 0.0), a0_dac, ts)
 yDac = yDac[(x -> x == 0).(indexin(t, setdiff(t, ts)))]
-yDac = [a[1] for a in yDac]
+yDac = [a[1] for a in yDac]                               # how DAC change affects comparator input
 
 # run
 us = fin(ts)
@@ -81,10 +82,10 @@ for i in 2:length(ys0)
   if rem(i, div(length(ys0), 40)) == 0
     print("*")
   end
-  vs[i] = ys[i-1] > 0 ? 1 : -1  # quantizer
-  currentD = runDT(prevD, vs[i])  # Discrete Transfer FunctionA
-  dfb = currentD[2] - prevD[2]
-  ys[i:end] = ys[i:end] - dfb .* yDac[1:length(ys0)-i+1]
+  vs[i] = ys[i-1] > 0 ? 1 : -1                            # quantizer
+  currentD = runDT(prevD, vs[i])                          # Discrete Transfer Function
+  dfb = currentD[2] - prevD[2]                            # change of FB
+  ys[i:end] = ys[i:end] - dfb .* yDac[1:length(ys0)-i+1]  # apply DAC response to comparator input
   # y = y - (currentD[2] - prevD[2])*yDac + ys0[i] - ys0[i-1]
 end
 
